@@ -7,35 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Addresses {
-  id         Int       @id @default(autoincrement())
-  userId     String    @unique @db.Uuid
-  name       String
-  address    String
-  zipcode    String
-  city       String
-  country    String
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
+model User {
+  id            String   @id @unique @db.Uuid
+  email         String?  @unique
+  name          String
+  contactNumber String
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  orders        Orders[]  // One-to-many relation to Orders
+}
+
+
+model Profile {
+  id              String   @id @unique @db.Uuid
+  email           String?  @unique    
+  contact         String?
+  name            String?
+  role            String?
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 model Orders {
-  id         Int         @id @default(autoincrement())
-  userId     String      @db.Uuid
-  stripeId   String
+  id         String     @id @default(uuid()) @db.Uuid    // Use UUID for the order's primary key
+  userId     String     @db.Uuid                        // Foreign key pointing to User's `id`
   name       String
   address    String
-  zipcode    String
-  city       String
-  country    String
-  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  created_at DateTime?  @default(now()) @db.Timestamptz(6)
   orderItem  OrderItem[]
+
+  // Relation to User model
+  user       User       @relation(fields: [userId], references: [id])
 }
 
 model OrderItem {
   id         Int       @id @default(autoincrement())
-  orderId    Int
+  orderId    String    @db.Uuid                          // Foreign key pointing to Orders' `id`
   productId  Int
   created_at DateTime? @default(now()) @db.Timestamptz(6)
+  
+  // Relations to Orders and Products models
   order      Orders    @relation(fields: [orderId], references: [id])
   product    Products  @relation(fields: [productId], references: [id])
 }

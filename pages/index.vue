@@ -1,7 +1,10 @@
 <template>
-  <div>Index ni</div>
+  <div>INDEXXX NI</div>
 </template>
 
-<script setup></script>
-
-<style lang="scss" scoped></style>
+<script setup>
+// Explicitly set the layout for this page
+definePageMeta({
+  layout: "main", // This will use the 'main' layout for this page
+});
+</script>
